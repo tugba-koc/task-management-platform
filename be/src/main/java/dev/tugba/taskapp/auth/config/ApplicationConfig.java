@@ -1,5 +1,7 @@
 package dev.tugba.taskapp.auth.config;
 
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,20 +25,37 @@ public class ApplicationConfig {
     @Autowired
     private UserRepository userRepository;
 
-    /* @Bean
+    // Check the data is email or not
+    private static final String EMAIL_REGEX =
+    "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$";
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+    private boolean isValidEmail(String username) {
+        return EMAIL_PATTERN.matcher(username).matches();
+    }
+
+    @Bean
     @Transactional
     public UserDetailsService userDetailsService(){
-        return username -> this.userRepository.findByEmail(username)
-        .orElseThrow(() -> new UsernameNotFoundException("user not found"));
-    } */
+        return username -> {
+            if (isValidEmail(username)) {
+                return this.userRepository.findByEmail(username);
+            } else {
+                return this.userRepository.findByTurkishId(username);
+            }
+        };
+        // TODO: add exception
+        /* .orElseThrow(() -> new XXXX("user not found")); */
+    }
 
-    /* @Bean
+    @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
-    } */
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
