@@ -1,5 +1,7 @@
 package dev.tugba.taskapp.auth.helper;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.regex.Pattern;
 
 public class Helper {
@@ -11,5 +13,13 @@ public class Helper {
 
     public static boolean isValidEmail(String email) {
         return EMAIL_PATTERN.matcher(email).matches();
+    }
+
+    public static final String generateSecretKey(){
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] secretKeyBytes = new byte[48];
+        secureRandom.nextBytes(secretKeyBytes);
+        String SECRET_KEY = Base64.getEncoder().encodeToString(secretKeyBytes);
+        return SECRET_KEY;
     }
 }
