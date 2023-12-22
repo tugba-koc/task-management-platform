@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.tugba.taskapp.auth.config.concretes.JwtManager;
+import dev.tugba.taskapp.auth.config.concretes.JwtService;
 import dev.tugba.taskapp.auth.config.constants.Role;
 import dev.tugba.taskapp.business.abstracts.AuthenticationService;
 import dev.tugba.taskapp.business.requests.CreateAuthenticationRequest;
@@ -23,7 +23,7 @@ public class AuthenticateManager implements AuthenticationService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtManager jwtManager;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     @Override
@@ -42,7 +42,7 @@ public class AuthenticateManager implements AuthenticationService{
         this.userRepository.save(user);
 
         // create new token for the user
-        String jwtToken = this.jwtManager.generateToken(user);
+        String jwtToken = this.jwtService.getToken(user);
 
         // return token in response
         return GetAuthenticationResponse.builder()
@@ -53,26 +53,36 @@ public class AuthenticateManager implements AuthenticationService{
     @Transactional(readOnly = true)
     @Cacheable(value = "AuthenticationService::findByEmail", key = "#createAuthenticationRequest.email")
     public GetAuthenticationResponse authenticate(CreateAuthenticationRequest createAuthenticationRequest) {
-        System.out.println("createAuthenticationRequest  >>> " + createAuthenticationRequest);
         User user;
-            if (createAuthenticationRequest.getEmail() != null) {
-                this.authenticationManager.authenticate(
+    
+        try {
+            // Try to authenticate the user
+            this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    createAuthenticationRequest.getEmail(), createAuthenticationRequest.getPassword()));
-                    user = this.userRepository.findByEmail(createAuthenticationRequest.getEmail());
+                    createAuthenticationRequest.getAccountcode(), createAuthenticationRequest.getPassword()));
+    
+            // If authentication is successful, proceed to find the user
+            if (createAuthenticationRequest.getAccountcode() != null) {
+                if (createAuthenticationRequest.getAccountcode().contains("@")) {
+                    user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode());
+                } else {
+                    user = this.userRepository.findByTurkishId(createAuthenticationRequest.getAccountcode());
+                }
             } else {
-                System.out.println("testtest2");
-                this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    createAuthenticationRequest.getTurkishId(), createAuthenticationRequest.getPassword()));
-                    user = this.userRepository.findByTurkishId(createAuthenticationRequest.getTurkishId());
+                // TODO: add an exception
+                return null;
             }
+    
+            String jwtToken = this.jwtService.getToken(user);
+            return GetAuthenticationResponse.builder()
+                .token(jwtToken).build();
+        } catch (Exception e) {
+            // TODO: add an exception
+            return null;
+        }
         
-        
-        String jwtToken = this.jwtManager.generateToken(user);
-        return GetAuthenticationResponse.builder()
-            .token(jwtToken).build();
     }
+    
 
     // TODO: add logout operation
 }

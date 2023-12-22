@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CreateAuthenticationRequest {
-    private String email;
-
-    private String turkishId;
+    private String accountcode;
 
     private String password;
 }
