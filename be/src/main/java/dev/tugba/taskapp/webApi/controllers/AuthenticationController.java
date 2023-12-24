@@ -26,7 +26,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(this.authenticationService.register(createRegisterRequest));
     }
 
-    @GetMapping("/authenticate")
+    @PostMapping("/authenticate")
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public ResponseEntity<GetAuthenticationResponse> authenticate(@RequestBody CreateAuthenticationRequest createAuthenticationRequest) {
         return ResponseEntity.ok(this.authenticationService.authenticate(createAuthenticationRequest));
