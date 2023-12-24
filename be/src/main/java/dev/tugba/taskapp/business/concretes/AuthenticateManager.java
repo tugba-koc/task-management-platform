@@ -30,8 +30,8 @@ public class AuthenticateManager implements AuthenticationService{
     @Transactional(readOnly = false)
     public GetAuthenticationResponse register(CreateRegisterRequest createRegisterRequest) {
         User user = User.builder()
-        .firstName(createRegisterRequest.getFirstName())
-        .lastName(createRegisterRequest.getLastName())
+        .firstname(createRegisterRequest.getFirstname())
+        .lastname(createRegisterRequest.getLastname())
         .email(createRegisterRequest.getEmail())
         .turkishId(createRegisterRequest.getTurkishId())
         .password(this.passwordEncoder.encode(createRegisterRequest.getPassword()))

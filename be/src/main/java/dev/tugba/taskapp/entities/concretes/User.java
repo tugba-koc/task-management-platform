@@ -39,11 +39,11 @@ public class User implements UserDetails {
     @Column(name="turkishId")
     private String turkishId;
 
-    @Column(name="firstName")
-    private String firstName;
+    @Column(name="firstname")
+    private String firstname;
 
-    @Column(name="lastName")
-    private String lastName;
+    @Column(name="lastname")
+    private String lastname;
 
     @Column(name="email")
     private String email;
