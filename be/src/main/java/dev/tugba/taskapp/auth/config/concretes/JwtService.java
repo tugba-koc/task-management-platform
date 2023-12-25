@@ -7,7 +7,6 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +19,6 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-
-  private String SECRET_KEY = Helper.generateSecretKey();
 
   public String getToken(User user) {
       return getToken(new HashMap<>(), user);
@@ -42,20 +39,20 @@ public class JwtService {
   }
 
   private SecretKey getKey() {
-     byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);
+     byte[] keyBytes=Decoders.BASE64.decode(Helper.generateSecretKey());
      return Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public String getUsernameFromToken(String token) {
+  public String extractUsername(String token) {
       return getClaim(token, Claims::getSubject);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
-      final String username=getUsernameFromToken(token);
+      final String username=extractUsername(token);
       return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
   }
 
-  private Claims getAllClaims(String token)
+  public Claims getAllClaims(String token)
   {
       return Jwts
           .parser()

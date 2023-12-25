@@ -13,6 +13,7 @@ import dev.tugba.taskapp.business.abstracts.AuthenticationService;
 import dev.tugba.taskapp.business.requests.CreateAuthenticationRequest;
 import dev.tugba.taskapp.business.requests.CreateRegisterRequest;
 import dev.tugba.taskapp.business.responses.GetAuthenticationResponse;
+import dev.tugba.taskapp.core.utilities.exceptions.AlreadyExistsUserException;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
 import dev.tugba.taskapp.entities.concretes.User;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,9 @@ public class AuthenticateManager implements AuthenticationService{
     @Override
     @Transactional(readOnly = false)
     public GetAuthenticationResponse register(CreateRegisterRequest createRegisterRequest) {
+        if(this.userRepository.existsByTurkishId(createRegisterRequest.getTurkishId())){
+            throw new AlreadyExistsUserException("turkishId: it is already saved.");
+        }
         User user = User.builder()
         .firstname(createRegisterRequest.getFirstname())
         .lastname(createRegisterRequest.getLastname())
