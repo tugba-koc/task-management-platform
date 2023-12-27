@@ -1,18 +1,16 @@
 package dev.tugba.taskapp.business.concretes;
 
-import java.util.logging.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.tugba.taskapp.auth.config.concretes.JwtService;
-import dev.tugba.taskapp.business.abstracts.UserService;
+import dev.tugba.taskapp.auth.config.abstracts.JwtService;
+import dev.tugba.taskapp.business.abstracts.UserRequestService;
 import dev.tugba.taskapp.business.responses.GetAllUserDataResponse;
 import dev.tugba.taskapp.core.utilities.mappers.ModelMapperService;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
 
 @Service
-public class UserManager implements UserService {
+public class UserRequestManager implements UserRequestService {
     private UserRepository userRepository;
 
     @Autowired
@@ -21,7 +19,7 @@ public class UserManager implements UserService {
     @Autowired
     private ModelMapperService modelMapperService;
 
-    public UserManager(UserRepository userRepository) {
+    public UserRequestManager(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

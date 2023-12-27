@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import dev.tugba.taskapp.auth.config.concretes.JwtService;
+import dev.tugba.taskapp.auth.config.abstracts.JwtService;
 import dev.tugba.taskapp.auth.config.constants.Role;
 import dev.tugba.taskapp.business.abstracts.AuthenticationService;
 import dev.tugba.taskapp.business.requests.CreateAuthenticationRequest;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticateManager implements AuthenticationService{
+public class AuthenticateManager implements AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -46,7 +46,7 @@ public class AuthenticateManager implements AuthenticationService{
         this.userRepository.save(user);
 
         // create new token for the user
-        String jwtToken = this.jwtService.extractToken(user);
+        String jwtToken = this.jwtService.generateToken(user);
 
         // return token in response
         return GetAuthenticationResponse.builder()
@@ -68,16 +68,18 @@ public class AuthenticateManager implements AuthenticationService{
             // If authentication is successful, proceed to find the user
             if (createAuthenticationRequest.getAccountcode() != null) {
                 if (createAuthenticationRequest.getAccountcode().contains("@")) {
-                    user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode());
+                    // TODO: add an exception
+                    user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode()).orElseThrow();
                 } else {
-                    user = this.userRepository.findByTurkishId(createAuthenticationRequest.getAccountcode());
+                    // TODO: add an exception
+                    user = this.userRepository.findByTurkishId(createAuthenticationRequest.getAccountcode()).orElseThrow();
                 }
             } else {
                 // TODO: add an exception
                 return null;
             }
     
-            String jwtToken = this.jwtService.extractToken(user);
+            String jwtToken = this.jwtService.generateToken(user);
             return GetAuthenticationResponse.builder()
                 .token(jwtToken).build();
         } catch (Exception e) {
@@ -86,7 +88,5 @@ public class AuthenticateManager implements AuthenticationService{
         }
         
     }
-    
-
     // TODO: add logout operation
 }
