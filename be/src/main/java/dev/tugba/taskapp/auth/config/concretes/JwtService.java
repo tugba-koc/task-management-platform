@@ -20,11 +20,11 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-  public String getToken(User user) {
-      return getToken(new HashMap<>(), user);
+  public String extractToken(User user) {
+      return extractToken(new HashMap<>(), user);
   }
 
-  private String getToken(Map<String,Object> extraClaims, User user) {
+  private String extractToken(Map<String,Object> extraClaims, User user) {
       return Jwts
           .builder()
           .claims(extraClaims)
@@ -33,7 +33,7 @@ public class JwtService {
           .claim("lastname", user.getLastname())
           .subject(user.getUsername())
           .issuedAt(new Date(System.currentTimeMillis()))
-          .expiration(new Date(System.currentTimeMillis()+1000*60*24))
+          .expiration(new Date(System.currentTimeMillis()+1000*60*2400))
           .signWith(getKey())
           .compact();
   }
@@ -44,7 +44,7 @@ public class JwtService {
   }
 
   public String extractUsername(String token) {
-      return getClaim(token, Claims::getSubject);
+      return extractClaim(token, Claims::getSubject);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -52,7 +52,7 @@ public class JwtService {
       return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
   }
 
-  public Claims getAllClaims(String token)
+  public Claims extractAllClaims(String token)
   {
       return Jwts
           .parser()
@@ -62,20 +62,19 @@ public class JwtService {
           .getPayload();
   }
 
-  public <T> T getClaim(String token, Function<Claims,T> claimsResolver)
+  public <T> T extractClaim(String token, Function<Claims,T> claimsResolver)
   {
-      final Claims claims=getAllClaims(token);
+      final Claims claims=extractAllClaims(token);
       return claimsResolver.apply(claims);
   }
 
   private Date getExpiration(String token)
   {
-      return getClaim(token, Claims::getExpiration);
+      return extractClaim(token, Claims::getExpiration);
   }
 
   private boolean isTokenExpired(String token)
   {
       return getExpiration(token).before(new Date());
   }
-  
 }

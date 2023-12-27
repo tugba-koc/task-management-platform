@@ -1,5 +1,7 @@
 package dev.tugba.taskapp.business.concretes;
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +10,6 @@ import dev.tugba.taskapp.business.abstracts.UserService;
 import dev.tugba.taskapp.business.responses.GetAllUserDataResponse;
 import dev.tugba.taskapp.core.utilities.mappers.ModelMapperService;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
-import dev.tugba.taskapp.entities.concretes.User;
 
 @Service
 public class UserManager implements UserService {
@@ -25,12 +26,17 @@ public class UserManager implements UserService {
     }
 
     @Override
-    public void getAllUserData(String bearerToken) {
-        String username = this.jwtService.extractUsername(bearerToken);
-        User user = this.userRepository.findByTurkishId(username);
+    public GetAllUserDataResponse getAllUserData(String bearerToken) {
+        String token = extractToken(bearerToken);
+        String name = this.jwtService.extractUsername(token);
+        System.out.println("name >>>> " + name);
+        return null;
+    }
 
-        GetAllUserDataResponse userdata = new GetAllUserDataResponse();
-        userdata.setFirstname(user.getFirstname());
-        userdata.setLastname(user.getLastname());
+    private static String extractToken(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        throw new IllegalArgumentException("Invalid bearer token format");
     }
 }

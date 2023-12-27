@@ -46,7 +46,7 @@ public class AuthenticateManager implements AuthenticationService{
         this.userRepository.save(user);
 
         // create new token for the user
-        String jwtToken = this.jwtService.getToken(user);
+        String jwtToken = this.jwtService.extractToken(user);
 
         // return token in response
         return GetAuthenticationResponse.builder()
@@ -77,7 +77,7 @@ public class AuthenticateManager implements AuthenticationService{
                 return null;
             }
     
-            String jwtToken = this.jwtService.getToken(user);
+            String jwtToken = this.jwtService.extractToken(user);
             return GetAuthenticationResponse.builder()
                 .token(jwtToken).build();
         } catch (Exception e) {
