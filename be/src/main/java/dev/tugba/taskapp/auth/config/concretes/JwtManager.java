@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import dev.tugba.taskapp.auth.config.abstracts.JwtService;
+import dev.tugba.taskapp.entities.concretes.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -20,10 +21,11 @@ public class JwtManager implements JwtService {
     @Value("${SECRET_KEY}")
     private String secretKey;
 
-  public String generateToken(UserDetails userDetails) {
+  public String generateToken(User user) {
       return Jwts
           .builder()
-          .subject(userDetails.getUsername())
+          .subject(user.getUsername())
+          .claim("userId", user.getId())
           .issuedAt(new Date(System.currentTimeMillis()))
           .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
           .signWith(getSigninKey())
@@ -38,6 +40,11 @@ public class JwtManager implements JwtService {
   public String extractUsername(String token) {
       return extractClaim(token, Claims::getSubject);
   }
+
+    public int extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Integer.class));
+    }
+
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
       final String username=extractUsername(token);

@@ -8,6 +8,8 @@ import dev.tugba.taskapp.business.abstracts.UserRequestService;
 import dev.tugba.taskapp.business.responses.GetAllUserDataResponse;
 import dev.tugba.taskapp.core.utilities.mappers.ModelMapperService;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
+import dev.tugba.taskapp.entities.concretes.User;
+import dev.tugba.taskapp.helper.Helper;
 
 @Service
 public class UserRequestManager implements UserRequestService {
@@ -25,16 +27,10 @@ public class UserRequestManager implements UserRequestService {
 
     @Override
     public GetAllUserDataResponse getAllUserData(String bearerToken) {
-        String token = extractToken(bearerToken);
-        String name = this.jwtService.extractUsername(token);
-        System.out.println("name >>>> " + name);
-        return null;
-    }
-
-    private static String extractToken(String bearerToken) {
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        throw new IllegalArgumentException("Invalid bearer token format");
+        String token = Helper.extractToken(bearerToken);
+        String email = this.jwtService.extractUsername(token);
+        User user = this.userRepository.findByEmail(email).orElseThrow();
+        GetAllUserDataResponse getAllUserDataResponse = this.modelMapperService.forResponse().map(user,GetAllUserDataResponse.class);
+        return getAllUserDataResponse;
     }
 }

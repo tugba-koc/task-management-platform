@@ -1,12 +1,13 @@
 package dev.tugba.taskapp.webApi.controllers;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import dev.tugba.taskapp.business.abstracts.UserRequestService;
-
+import dev.tugba.taskapp.business.responses.GetAllUserDataResponse;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -17,7 +18,7 @@ public class UserController {
 
     @GetMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    public void getAllUserDataResponse(@RequestHeader("Authorization") String bearerToken) {
-        this.userRequestService.getAllUserData(bearerToken);
+    public ResponseEntity<GetAllUserDataResponse> getAllUserDataResponse(@RequestHeader("Authorization") String bearerToken) {
+        return ResponseEntity.ok(this.userRequestService.getAllUserData(bearerToken));
     }
 }

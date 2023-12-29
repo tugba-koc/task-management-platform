@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import dev.tugba.taskapp.auth.config.abstracts.UserService;
-import dev.tugba.taskapp.auth.helper.Helper;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
+import dev.tugba.taskapp.helper.Helper;
 import lombok.RequiredArgsConstructor;
 
 @Service

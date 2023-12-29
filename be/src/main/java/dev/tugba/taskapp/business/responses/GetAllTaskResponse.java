@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllUserDataResponse implements Serializable {
-    private String firstname;
-    private String lastname;
-    private String turkishId;
-    private String email;
+public class GetAllTaskResponse implements Serializable {
+    private int id;
+    private String body;
+    private String title;
 }

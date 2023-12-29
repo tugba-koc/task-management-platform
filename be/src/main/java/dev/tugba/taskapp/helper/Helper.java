@@ -1,4 +1,4 @@
-package dev.tugba.taskapp.auth.helper;
+package dev.tugba.taskapp.helper;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -21,5 +21,12 @@ public class Helper {
         secureRandom.nextBytes(secretKeyBytes);
         String SECRET_KEY = Base64.getEncoder().encodeToString(secretKeyBytes);
         return SECRET_KEY;
+    }
+
+    public static String extractToken(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        throw new IllegalArgumentException("Invalid bearer token format");
     }
 }
