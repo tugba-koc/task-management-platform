@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userApi } from '../../redux/services/userApi';
+import { useRegisterMutation } from '../../redux/services/userApi';
 
 const Register = () => {
   const [user, setUser] = useState({
@@ -12,7 +12,7 @@ const Register = () => {
   });
   const [errorText, setErrorText] = useState();
 
-  const [trigger] = userApi.endpoints.register.useMutation();
+  const [trigger] = useRegisterMutation();
 
   const navigate = useNavigate();
 
@@ -28,6 +28,8 @@ const Register = () => {
       if (res.error) {
         if (res.error.status === 400) {
           setErrorText('Hatalı giriş yaptınız.');
+        } else if (res.error.status === 422) {
+          setErrorText('Turkish id is already saved in our db.');
         }
       } else {
         navigate('/direction');
@@ -35,13 +37,13 @@ const Register = () => {
     } catch (error) {
       setErrorText(error.message);
     } finally {
-      setUser({
+      /*     setUser({
         firstname: '',
         lastname: '',
         email: '',
         turkishId: '',
         password: '',
-      });
+      }); */
     }
   };
 

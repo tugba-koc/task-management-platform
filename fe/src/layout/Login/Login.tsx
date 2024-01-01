@@ -1,30 +1,37 @@
 import React, { useState } from 'react';
-import { userApi } from '../../redux/services/userApi';
-import { useDispatch } from 'react-redux';
-import { tokenAdded } from '../../redux/features/userSlice';
+import { useAuthenticateMutation } from '@redux/services/userApi';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [user, setUser] = useState({ username: '', password: '' });
-  const [error, setError] = useState();
+  const [errorText, setErrorText] = useState();
 
-  const [trigger] = userApi.endpoints.authenticate.useMutation();
+  const [authenticate] = useAuthenticateMutation();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleChange = (e) => {
+    setErrorText();
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
 
   const handleLogin = async () => {
     try {
-      const res = await trigger(user);
-      await dispatch(tokenAdded(res?.data.token));
-      navigate('/direction');
+      if (localStorage.getItem('jwt')) {
+        localStorage.removeItem('jwt');
+      }
+      const res = await authenticate(user);
+
+      if (res.error) {
+        if (res.error.data.statusCode === 422) {
+          setErrorText('Kullanıcı kimliği uyuşmuyor.');
+        }
+      } else {
+        navigate('/direction');
+      }
     } catch (error) {
-      setError(error.message);
+      setErrorText(error.message);
     } finally {
       setUser({ username: '', password: '' });
     }
@@ -53,11 +60,11 @@ const Login = () => {
           value={user.password}
         />
 
-        {error ? <p className='error'>{error}</p> : null}
+        {errorText ? <p className='error'>{errorText}</p> : null}
         <button
           onClick={() => handleLogin()}
-          className={error ? 'button_disabled' : ''}
-          disabled={error}
+          className={errorText ? 'button_disabled' : ''}
+          disabled={errorText}
           type='submit'
         >
           login

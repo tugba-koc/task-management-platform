@@ -22,4 +22,9 @@ public class CreateTaskRequest {
     @NotEmpty(message = "body : must not be empty")
     @NotBlank(message = "body : must not be blank")
     private String body;
+
+    @NotNull(message = "body : must not be null")
+    @NotEmpty(message = "body : must not be empty")
+    @NotBlank(message = "body : must not be blank")
+    private String requestId;
 }

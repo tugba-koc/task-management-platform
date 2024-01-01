@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: 'settings',
+    path: 'user/profile',
     element: <UserSettings />,
     errorElement: <Error />,
   },
