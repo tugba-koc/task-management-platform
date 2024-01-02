@@ -17,6 +17,16 @@ button {
   color: white;
 }
 
+button.small {
+  width: 40px;
+  height: 20px;
+  border-radius: 20px;
+  border: none;
+  background-color: rgb(61, 61, 212);
+  margin-top: 12px;
+  color: white;
+}
+
 .button_disabled {
   background-color: rgb(209, 209, 209);
 }
@@ -52,4 +62,11 @@ label {
   color: red;
   font-size: 12px;
   margin-top: 0px;
+}
+
+.group {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  column-gap: 10px;
 }

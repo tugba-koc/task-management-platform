@@ -32,4 +32,9 @@ public class CreateAuthenticationRequest {
     @NotEmpty(message = "password : must not be empty")
     @NotBlank(message = "password : must not be blank")
     private String password;
+
+    @NotNull(message = "password : must not be null")
+    @NotEmpty(message = "password : must not be empty")
+    @NotBlank(message = "password : must not be blank")
+    private String requestId;
 }

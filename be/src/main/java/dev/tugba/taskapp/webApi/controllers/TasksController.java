@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.tugba.taskapp.business.abstracts.TaskService;
 import dev.tugba.taskapp.business.requests.CreateTaskRequest;
+import dev.tugba.taskapp.business.requests.DeleteTaskRequest;
 import dev.tugba.taskapp.business.responses.GetAllTaskResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,12 +31,12 @@ public class TasksController {
         return ResponseEntity.ok(this.taskService.add(createTaskRequest, bearerToken));
     }
 
-    /* @GetMapping
+    @DeleteMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    public ResponseEntity<String> delete(@PathVariable DeleteTaskRequest deleteTaskRequest) {
+    public ResponseEntity<String> delete(@RequestBody @Valid DeleteTaskRequest deleteTaskRequest) {
         this.taskService.delete(deleteTaskRequest);
         return ResponseEntity.ok("Success");
-    } */
+    }
     
     @GetMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})

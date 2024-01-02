@@ -2,12 +2,10 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { setTaskData } from '../features/tasksSlice';
 import { v4 as uuidv4 } from 'uuid';
 
-const apiBaseUrl = 'http://localhost:8080/api/v1';
-
 export const tasksApi = createApi({
   reducerPath: 'tasksApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: apiBaseUrl,
+    baseUrl: import.meta.env.VITE_API_BASE_URL,
   }),
   endpoints: (builder) => ({
     getAllTasks: builder.query({
@@ -41,22 +39,23 @@ export const tasksApi = createApi({
       }),
       invalidatesTags: ['AllTasks'],
     }),
-    /*     editTask: builder.mutation({
-      query: (edittedTask) => ({
-        url: 'task',
-        method: 'PATCH',
-        body: edittedTask,
+    deleteTask: builder.mutation({
+      query: (id) => ({
+        url: '/task',
+        method: 'DELETE',
+        body: { taskId: id, requestId: uuidv4() },
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
       }),
-    }),  */
-    /*     getTaskById: builder.query({
-      query: (id) => `task/${id}`,
-    }),*/
+      invalidatesTags: ['AllTasks'],
+    }),
   }),
 });
 
 export const {
   useGetAllTasksQuery,
-  useGetTaskByIdQuery,
+  useDeleteTaskMutation,
   usePostTaskMutation,
-  useEditTaskMutation,
 } = tasksApi;

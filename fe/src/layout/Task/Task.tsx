@@ -1,29 +1,22 @@
 import React, { useState } from 'react';
 import { useGetUserDataQuery } from '@redux/services/userApi';
 import {
+  useDeleteTaskMutation,
   useGetAllTasksQuery,
   usePostTaskMutation,
 } from '../../redux/services/tasksApi';
-import { useDispatch } from 'react-redux';
-import { setTaskData } from '../../redux/features/tasksSlice';
 
 const Task = () => {
-  const dispatch = useDispatch();
-  const {
-    data: userData,
-    isLoading,
-    isError,
-    isSuccess,
-    error,
-  } = useGetUserDataQuery();
+  const { data: userData, isError, isSuccess, error } = useGetUserDataQuery();
 
-  const { data: tasks } = useGetAllTasksQuery({
+  const { data: tasks, isLoading } = useGetAllTasksQuery({
     pollingInterval: 3000,
     refetchOnMountOrArgChange: true,
     skip: false,
   });
 
   const [postTask] = usePostTaskMutation();
+  const [deleteTask] = useDeleteTaskMutation();
 
   const [task, setTask] = useState({ title: '', body: '' });
   const [errorText, setErrorText] = useState();
@@ -36,17 +29,19 @@ const Task = () => {
 
   const handleSubmit = async () => {
     try {
-      const res = await postTask(task);
-      /* dispatch(setTaskData(res.data)); */
-      if (res.error) {
-        if (res.error.data.statusCode === 422) {
-          setErrorText('Kullanıcı kimliği uyuşmuyor.');
-        }
-      } else {
-        /* navigate('/direction'); */
-      }
-    } catch (error) {
-      setErrorText(error.message);
+      await postTask(task);
+    } catch (err) {
+      setErrorText(err);
+    } finally {
+      setTask({ title: '', body: '' });
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteTask(id);
+    } catch (err) {
+      setErrorText(err);
     } finally {
       setTask({ title: '', body: '' });
     }
@@ -95,7 +90,18 @@ const Task = () => {
         <div>
           {tasks
             ? tasks?.map((task) => {
-                return <p key={task.id}>{task.title}</p>;
+                return (
+                  <div className='group'>
+                    <p key={task.id}>{task.title}</p>{' '}
+                    <button
+                      onClick={() => handleDelete(task.id)}
+                      className='small'
+                    >
+                      -
+                    </button>
+                    <button className='small'>edit</button>
+                  </div>
+                );
               })
             : ''}
         </div>

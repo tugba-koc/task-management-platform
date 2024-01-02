@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { setUserData } from '../features/userSlice';
-
-const apiBaseUrl = 'http://localhost:8080/api/v1';
+import { v4 as uuidv4 } from 'uuid';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: apiBaseUrl,
+    baseUrl: import.meta.env.VITE_API_BASE_URL,
     prepareHeaders: (headers) => {
       if (localStorage.getItem('jwt')) {
         headers.set('Authorization', `Bearer ${localStorage.getItem('jwt')}`);
@@ -37,6 +36,7 @@ export const userApi = createApi({
         body: {
           accountcode: user.username,
           password: user.password,
+          requestId: uuidv4(),
         },
       }),
       onQueryStarted: async (credentials, { queryFulfilled }) => {

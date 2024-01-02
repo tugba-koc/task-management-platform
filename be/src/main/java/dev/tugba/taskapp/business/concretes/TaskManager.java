@@ -64,7 +64,11 @@ public class TaskManager implements TaskService {
         String token = Helper.extractToken(bearerToken);
         int userId = this.jwtService.extractUserId(token);
 
+        // TODO: add an exception
         User user = this.userRepository.findById(userId).orElseThrow();
+
+        // To ignore the requestId field in CreateTaskRequest, we need to setRequestId as null
+        createTaskRequest.setRequestId(null);
         
         Task task = this.modelMapperService.forRequest().map(createTaskRequest,Task.class);
         task.setUser(user);
