@@ -51,6 +51,18 @@ export const tasksApi = createApi({
       }),
       invalidatesTags: ['AllTasks'],
     }),
+    updateTask: builder.mutation({
+      query: (task) => ({        
+        url: '/task',
+        method: 'PATCH',
+        body: { ...task, requestId: uuidv4() },
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      }),
+      invalidatesTags: ['AllTasks'],
+    }),
   }),
 });
 
@@ -58,4 +70,5 @@ export const {
   useGetAllTasksQuery,
   useDeleteTaskMutation,
   usePostTaskMutation,
+  useUpdateTaskMutation,
 } = tasksApi;

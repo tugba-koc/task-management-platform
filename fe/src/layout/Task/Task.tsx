@@ -4,19 +4,20 @@ import {
   useDeleteTaskMutation,
   useGetAllTasksQuery,
   usePostTaskMutation,
+  useUpdateTaskMutation,
 } from '../../redux/services/tasksApi';
 
 const Task = () => {
+  const [update, setUpdate] = useState(false);
+  const [prevData, setPrevData] = useState({ id: null, title: '', body: '' });
+
   const { data: userData, isError, isSuccess, error } = useGetUserDataQuery();
 
-  const { data: tasks, isLoading } = useGetAllTasksQuery({
-    pollingInterval: 3000,
-    refetchOnMountOrArgChange: true,
-    skip: false,
-  });
+  const { data: tasks, isLoading } = useGetAllTasksQuery();
 
   const [postTask] = usePostTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
+  const [updateTaskData] = useUpdateTaskMutation();
 
   const [task, setTask] = useState({ title: '', body: '' });
   const [errorText, setErrorText] = useState();
@@ -45,6 +46,29 @@ const Task = () => {
     } finally {
       setTask({ title: '', body: '' });
     }
+  };
+
+  // taskVal : the task is to be editted
+  const handleUpdate = (taskVal) => {
+    setUpdate(true);
+    setTask({ title: taskVal.title, body: taskVal.body }); // to show data on input
+    setPrevData({ id: taskVal.id, title: taskVal.title, body: taskVal.body });
+  };
+
+  const sendUpdate = () => {
+    if (prevData.title != task.title && prevData.body != task.body) {
+      updateTaskData({
+        taskId: prevData.id,
+        title: task.title,
+        body: task.body,
+      });
+    } else if (prevData.title == task.title && prevData.body != task.body) {
+      updateTaskData({ taskId: prevData.id, body: task.body });
+    } else if (prevData.title != task.title && prevData.body == task.body) {
+      updateTaskData({ taskId: prevData.id, title: task.title });
+    }
+    setUpdate(false);
+    setTask({ title: '', body: '' });
   };
 
   if (isLoading) {
@@ -79,27 +103,34 @@ const Task = () => {
 
           {errorText ? <p className='error'>{errorText}</p> : null}
           <button
-            onClick={() => handleSubmit()}
+            onClick={() => (update && task ? sendUpdate() : handleSubmit())}
             className={errorText ? 'button_disabled' : ''}
             disabled={errorText}
             type='submit'
+            disabled={!task.title || !task.body}
           >
-            add
+            {update ? 'update' : 'add'}
           </button>
         </form>
         <div>
           {tasks
-            ? tasks?.map((task) => {
+            ? tasks?.map((taskVal, index) => {
                 return (
-                  <div className='group'>
-                    <p key={task.id}>{task.title}</p>{' '}
+                  <div key={index} className='group'>
+                    <p>{taskVal.title}</p>
+                    <p>{taskVal.body}</p>
                     <button
-                      onClick={() => handleDelete(task.id)}
+                      onClick={() => handleDelete(taskVal.id)}
                       className='small'
                     >
                       -
                     </button>
-                    <button className='small'>edit</button>
+                    <button
+                      onClick={() => handleUpdate(taskVal)}
+                      className='small'
+                    >
+                      edit
+                    </button>
                   </div>
                 );
               })

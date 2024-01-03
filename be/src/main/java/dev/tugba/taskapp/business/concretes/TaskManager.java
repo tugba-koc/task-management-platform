@@ -10,6 +10,7 @@ import dev.tugba.taskapp.auth.config.abstracts.JwtService;
 import dev.tugba.taskapp.business.abstracts.TaskService;
 import dev.tugba.taskapp.business.requests.CreateTaskRequest;
 import dev.tugba.taskapp.business.requests.DeleteTaskRequest;
+import dev.tugba.taskapp.business.requests.UpdateTaskRequest;
 import dev.tugba.taskapp.business.responses.GetAllTaskResponse;
 import dev.tugba.taskapp.core.utilities.mappers.ModelMapperService;
 import dev.tugba.taskapp.dataAccess.abstracts.TaskRepository;
@@ -80,5 +81,28 @@ public class TaskManager implements TaskService {
         // set requestId again to show in response
         createTaskRequest.setRequestId(requestId);
         return createTaskRequest;
+    }
+
+    @Override
+    public UpdateTaskRequest update(UpdateTaskRequest updateTaskRequest) {
+        // Find the task by ID
+        Task task = this.taskRepository.findById(updateTaskRequest.getTaskId());
+        // TODO: add an exception
+        /*  .orElseThrow(); */
+
+        // Check if title is provided for update
+        if (updateTaskRequest.getTitle() != null) {
+        task.setTitle(updateTaskRequest.getTitle());
+        }
+
+        // Check if body is provided for update
+        if (updateTaskRequest.getBody() != null) {
+        task.setBody(updateTaskRequest.getBody());
+        }
+
+        // Save the updated task to the repository
+        this.taskRepository.save(task);
+
+        return updateTaskRequest;
     }
 }

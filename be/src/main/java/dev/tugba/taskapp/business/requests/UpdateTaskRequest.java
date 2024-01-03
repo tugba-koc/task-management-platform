@@ -1,5 +1,6 @@
 package dev.tugba.taskapp.business.requests;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,12 +10,10 @@ import lombok.NonNull;
 @NonNull
 @Builder
 public class UpdateTaskRequest {
-    @NonNull
-    private String taskId;
+    @NotNull(message = "taskId : must not be null")
+    private int taskId;
 
-    @NonNull
     private String title;
 
-    @NonNull
     private String body;
 }
