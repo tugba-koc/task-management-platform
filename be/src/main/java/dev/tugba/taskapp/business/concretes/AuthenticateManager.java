@@ -16,6 +16,7 @@ import dev.tugba.taskapp.business.responses.GetAuthenticationResponse;
 import dev.tugba.taskapp.core.utilities.exceptions.AlreadyExistsUserException;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
 import dev.tugba.taskapp.entities.concretes.User;
+import dev.tugba.taskapp.helper.Helper;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -67,7 +68,7 @@ public class AuthenticateManager implements AuthenticationService {
     
             // If authentication is successful, proceed to find the user
             if (createAuthenticationRequest.getAccountcode() != null) {
-                if (createAuthenticationRequest.getAccountcode().contains("@")) {
+                if (Helper.isValidEmail(createAuthenticationRequest.getAccountcode())) {
                     // TODO: add an exception
                     user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode()).orElseThrow();
                 } else {
