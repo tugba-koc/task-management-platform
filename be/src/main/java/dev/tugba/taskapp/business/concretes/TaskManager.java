@@ -67,12 +67,18 @@ public class TaskManager implements TaskService {
         // TODO: add an exception
         User user = this.userRepository.findById(userId).orElseThrow();
 
+        // store the requestId before mapping
+        String requestId = createTaskRequest.getRequestId();
+
         // To ignore the requestId field in CreateTaskRequest, we need to setRequestId as null
         createTaskRequest.setRequestId(null);
         
         Task task = this.modelMapperService.forRequest().map(createTaskRequest,Task.class);
         task.setUser(user);
         this.taskRepository.save(task);
+
+        // set requestId again to show in response
+        createTaskRequest.setRequestId(requestId);
         return createTaskRequest;
     }
 }
