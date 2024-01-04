@@ -6,12 +6,6 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_BASE_URL,
-    prepareHeaders: (headers) => {
-      if (localStorage.getItem('jwt')) {
-        headers.set('Authorization', `Bearer ${localStorage.getItem('jwt')}`);
-      }
-      return headers;
-    },
   }),
   endpoints: (builder) => ({
     register: builder.mutation({
@@ -51,7 +45,10 @@ export const userApi = createApi({
     getUserData: builder.query({
       query: () => ({
         url: '/user',
-        method: 'Get',
+        method: 'GET',
+        params: {
+          requestId: uuidv4(),
+        },
         headers: {
           'Content-type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('jwt')}`,

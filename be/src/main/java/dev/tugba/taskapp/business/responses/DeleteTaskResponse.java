@@ -1,10 +1,7 @@
 package dev.tugba.taskapp.business.responses;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
-import dev.tugba.taskapp.business.datas.GetAllTaskData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllTaskResponse implements Serializable {
-    private List<GetAllTaskData> taskList;
+public class DeleteTaskResponse {
     private String status;
-    private LocalDateTime datetime;
     private String requestId;
+    private LocalDateTime datetime;
 }

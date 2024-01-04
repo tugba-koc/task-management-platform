@@ -1,7 +1,5 @@
 package dev.tugba.taskapp.webApi.controllers;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,13 +9,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.tugba.taskapp.business.abstracts.TaskService;
 import dev.tugba.taskapp.business.requests.CreateTaskRequest;
 import dev.tugba.taskapp.business.requests.DeleteTaskRequest;
 import dev.tugba.taskapp.business.requests.UpdateTaskRequest;
+import dev.tugba.taskapp.business.responses.DeleteTaskResponse;
 import dev.tugba.taskapp.business.responses.GetAllTaskResponse;
+import dev.tugba.taskapp.business.responses.PostTaskResponse;
+import dev.tugba.taskapp.business.responses.UpdateTaskResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -29,26 +31,25 @@ public class TasksController {
 
     @PostMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    public ResponseEntity<CreateTaskRequest> add(@RequestBody @Valid CreateTaskRequest createTaskRequest, @RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<PostTaskResponse> add(@RequestBody @Valid CreateTaskRequest createTaskRequest, @RequestHeader("Authorization") String bearerToken) {
         return ResponseEntity.ok(this.taskService.add(createTaskRequest, bearerToken));
     }
 
     @DeleteMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    public ResponseEntity<String> delete(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid DeleteTaskRequest deleteTaskRequest) {
-        this.taskService.delete(deleteTaskRequest);
-        return ResponseEntity.ok("Success");
+    public ResponseEntity<DeleteTaskResponse> delete(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid DeleteTaskRequest deleteTaskRequest) {
+        return ResponseEntity.ok(this.taskService.delete(deleteTaskRequest));
     }
 
     @PatchMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    public ResponseEntity<UpdateTaskRequest> update(@RequestBody @Valid UpdateTaskRequest updateTaskRequest) {
+    public ResponseEntity<UpdateTaskResponse> update(@RequestBody @Valid UpdateTaskRequest updateTaskRequest) {
         return ResponseEntity.ok(this.taskService.update(updateTaskRequest));
     }
     
     @GetMapping
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
-    public ResponseEntity<List<GetAllTaskResponse>> getAllTask(@RequestHeader("Authorization") String bearerToken) {
-        return ResponseEntity.ok(this.taskService.getAllTask(bearerToken));
+    public ResponseEntity<GetAllTaskResponse> getAllTask(@RequestHeader("Authorization") String bearerToken, @RequestParam String requestId) {
+        return ResponseEntity.ok(this.taskService.getAllTask(bearerToken, requestId));
     }
 }

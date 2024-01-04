@@ -13,7 +13,10 @@ import dev.tugba.taskapp.business.abstracts.AuthenticationService;
 import dev.tugba.taskapp.business.requests.CreateAuthenticationRequest;
 import dev.tugba.taskapp.business.requests.CreateRegisterRequest;
 import dev.tugba.taskapp.business.responses.GetAuthenticationResponse;
+import dev.tugba.taskapp.core.utilities.exceptions.AccountCodeNotFoundException;
 import dev.tugba.taskapp.core.utilities.exceptions.AlreadyExistsUserException;
+import dev.tugba.taskapp.core.utilities.exceptions.AuthenticationServiceException;
+import dev.tugba.taskapp.core.utilities.exceptions.UserNotFoundException;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
 import dev.tugba.taskapp.entities.concretes.User;
 import dev.tugba.taskapp.helper.Helper;
@@ -69,23 +72,19 @@ public class AuthenticateManager implements AuthenticationService {
             // If authentication is successful, proceed to find the user
             if (createAuthenticationRequest.getAccountcode() != null) {
                 if (Helper.isValidEmail(createAuthenticationRequest.getAccountcode())) {
-                    // TODO: add an exception
-                    user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode()).orElseThrow();
+                    user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode()).orElseThrow(() -> new UserNotFoundException("there is not any user with this email"));
                 } else {
-                    // TODO: add an exception
-                    user = this.userRepository.findByTurkishId(createAuthenticationRequest.getAccountcode()).orElseThrow();
+                    user = this.userRepository.findByTurkishId(createAuthenticationRequest.getAccountcode()).orElseThrow(() -> new UserNotFoundException("there is not any user with this turkishId"));
                 }
             } else {
-                // TODO: add an exception
-                return null;
+                throw new AccountCodeNotFoundException("Account code cannot be null");
             }
     
             String jwtToken = this.jwtService.generateToken(user);
             return GetAuthenticationResponse.builder()
                 .token(jwtToken).build();
         } catch (Exception e) {
-            // TODO: add an exception
-            return null;
+            throw new AuthenticationServiceException("Authentication service error");
         }
         
     }

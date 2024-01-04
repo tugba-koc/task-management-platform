@@ -8,7 +8,7 @@ import {
 } from '../../redux/services/tasksApi';
 
 const Task = () => {
-  const [update, setUpdate] = useState(false);
+  const [update, setUpdate] = useState<boolean>(false);
   const [prevData, setPrevData] = useState({ id: null, title: '', body: '' });
 
   const { data: userData, isError, isSuccess, error } = useGetUserDataQuery();
@@ -38,7 +38,7 @@ const Task = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     try {
       await deleteTask(id);
     } catch (err) {
@@ -114,7 +114,7 @@ const Task = () => {
         </form>
         <div>
           {tasks
-            ? tasks?.map((taskVal, index) => {
+            ? tasks?.taskList.map((taskVal, index) => {
                 return (
                   <div key={index} className='group'>
                     <p>{taskVal.title}</p>

@@ -1,15 +1,16 @@
 package dev.tugba.taskapp.business.abstracts;
 
-import java.util.List;
-
 import dev.tugba.taskapp.business.requests.CreateTaskRequest;
 import dev.tugba.taskapp.business.requests.DeleteTaskRequest;
 import dev.tugba.taskapp.business.requests.UpdateTaskRequest;
+import dev.tugba.taskapp.business.responses.DeleteTaskResponse;
 import dev.tugba.taskapp.business.responses.GetAllTaskResponse;
+import dev.tugba.taskapp.business.responses.PostTaskResponse;
+import dev.tugba.taskapp.business.responses.UpdateTaskResponse;
 
 public interface TaskService {
-    List<GetAllTaskResponse> getAllTask(String bearerToken);
-    CreateTaskRequest add(CreateTaskRequest createTaskRequest, String bearerToken);
-    void delete(DeleteTaskRequest deleteTaskRequest);
-    UpdateTaskRequest update(UpdateTaskRequest updateTaskRequest);
+    GetAllTaskResponse getAllTask(String bearerToken, String requestId);
+    PostTaskResponse add(CreateTaskRequest createTaskRequest, String bearerToken);
+    DeleteTaskResponse delete(DeleteTaskRequest deleteTaskRequest);
+    UpdateTaskResponse update(UpdateTaskRequest updateTaskRequest);
 }

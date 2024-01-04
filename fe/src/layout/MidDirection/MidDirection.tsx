@@ -6,7 +6,7 @@ const MidDirection = () => {
 
   return (
     <div>
-      <button onClick={() => navigate('/settings')}>Go to settings</button>
+      <button onClick={() => navigate('/user/profile')}>Go to settings</button>
       <button onClick={() => navigate('/tasks')}>Go to Task Page</button>
     </div>
   );

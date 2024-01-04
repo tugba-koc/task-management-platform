@@ -1,6 +1,5 @@
 package dev.tugba.taskapp.core.utilities.exceptions;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,35 +18,49 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     // TODO: create enum to show statusCode
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
-        // TODO: ASK statuscode is right?
-        return new ResponseEntity<>(getErrorsMap(errors, "Validation.Exception", 422), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Validation.Exception", 422), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AlreadyExistsUserException.class)
     public ResponseEntity<Map<String, Object>> handleAlreadyExistsUserWithSameTurkishId(AlreadyExistsUserException ex) {
         List<String> errors = Collections.singletonList(ex.getMessage());
-        return new ResponseEntity<>(getErrorsMap(errors, "Validation.Exception", 422), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Validation.Exception", 422), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleTaskNotFound(TaskNotFoundException ex) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Runtime.Exception", 422), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Runtime.Exception", 422), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthenticationServiceException(AuthenticationServiceException ex) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Authentication.Exception", 422), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public final ResponseEntity<Map<String, Object>> handleGeneralExceptions(Exception ex) {
         List<String> errors = Collections.singletonList(ex.getMessage());
-        // TODO: ASK statuscode is right?
-        return new ResponseEntity<>(getErrorsMap(errors, "General.Exception", 500), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "General.Exception", 500), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Map<String, Object>> handleRuntimeExceptions(RuntimeException ex) {
         List<String> errors = Collections.singletonList(ex.getMessage());
-        // TODO: ASK statuscode is right?
-        return new ResponseEntity<>(getErrorsMap(errors, "Runtime.Exception", 500), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Runtime.Exception", 500), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private Map<String, Object> getErrorsMap(List<String> errors, String message, int statusCode) {

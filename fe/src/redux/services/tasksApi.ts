@@ -16,6 +16,9 @@ export const tasksApi = createApi({
           'Content-type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
+        params: {
+          requestId: uuidv4(),
+        },
       }),
       providesTags: ['AllTasks'],
       onQueryStarted: async (credentials, { dispatch, queryFulfilled }) => {
@@ -52,7 +55,7 @@ export const tasksApi = createApi({
       invalidatesTags: ['AllTasks'],
     }),
     updateTask: builder.mutation({
-      query: (task) => ({        
+      query: (task) => ({
         url: '/task',
         method: 'PATCH',
         body: { ...task, requestId: uuidv4() },

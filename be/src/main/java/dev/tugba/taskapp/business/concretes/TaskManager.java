@@ -1,5 +1,6 @@
 package dev.tugba.taskapp.business.concretes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,10 +9,16 @@ import org.springframework.stereotype.Service;
 
 import dev.tugba.taskapp.auth.config.abstracts.JwtService;
 import dev.tugba.taskapp.business.abstracts.TaskService;
+import dev.tugba.taskapp.business.datas.GetAllTaskData;
 import dev.tugba.taskapp.business.requests.CreateTaskRequest;
 import dev.tugba.taskapp.business.requests.DeleteTaskRequest;
 import dev.tugba.taskapp.business.requests.UpdateTaskRequest;
+import dev.tugba.taskapp.business.responses.DeleteTaskResponse;
 import dev.tugba.taskapp.business.responses.GetAllTaskResponse;
+import dev.tugba.taskapp.business.responses.PostTaskResponse;
+import dev.tugba.taskapp.business.responses.UpdateTaskResponse;
+import dev.tugba.taskapp.core.utilities.exceptions.TaskNotFoundException;
+import dev.tugba.taskapp.core.utilities.exceptions.UserNotFoundException;
 import dev.tugba.taskapp.core.utilities.mappers.ModelMapperService;
 import dev.tugba.taskapp.dataAccess.abstracts.TaskRepository;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
@@ -36,73 +43,88 @@ public class TaskManager implements TaskService {
     }
 
     @Override
-    public void delete(DeleteTaskRequest deleteTaskRequest) {
-        Task task = this.taskRepository.findById(deleteTaskRequest.getTaskId());
+    public DeleteTaskResponse delete(DeleteTaskRequest deleteTaskRequest) {
+        Task task = this.taskRepository.findById(deleteTaskRequest.getTaskId()).orElseThrow(()->new TaskNotFoundException("there is not any task with this id"));
         this.taskRepository.delete(task);
-         // TODO: ad an exception
-         /* .orElseThrow(() -> new ReviewNotFoundException(ErrorCodeConstants.REVIEW_NOT_FOUND.getErrorCode())); */
+        DeleteTaskResponse deleteTaskResponse = new DeleteTaskResponse();
+        deleteTaskResponse.setDatetime(LocalDateTime.now());
+        deleteTaskResponse.setRequestId(deleteTaskRequest.getRequestId());
+        deleteTaskResponse.setStatus("Success");
+        return deleteTaskResponse;
     }
 
     @Override
-    public List<GetAllTaskResponse> getAllTask(String bearerToken) {
+    public GetAllTaskResponse getAllTask(String bearerToken, String requestId) {
         String token = Helper.extractToken(bearerToken);
         int userId = this.jwtService.extractUserId(token);
 
-        User user = this.userRepository.findById(userId).orElseThrow();
+        User user = this.userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("there is not any user with this id"));
 
-        List<Task> tasks = this.taskRepository.findAllByUserId(user.getId());
+        List<Task> tasks = this.taskRepository.findAllByUserId(user.getId()).orElseThrow(()-> new UserNotFoundException("there is not any task with this id"));
 
-        
-        List<GetAllTaskResponse> taskList = tasks.stream()
+        List<GetAllTaskData> taskList = tasks.stream()
                 .map(task->this.modelMapperService.forResponse()
-                        .map(task,GetAllTaskResponse.class)).collect(Collectors.toList());
+                        .map(task,GetAllTaskData.class)).collect(Collectors.toList());
 
-        return taskList;
+        GetAllTaskResponse getAllTaskResponse = new GetAllTaskResponse();
+        getAllTaskResponse.setTaskList(taskList);
+        getAllTaskResponse.setDatetime(LocalDateTime.now());
+        getAllTaskResponse.setStatus("SUCCESS");
+        getAllTaskResponse.setRequestId(requestId);
+        return getAllTaskResponse;
     }
 
     @Override
-    public CreateTaskRequest add(CreateTaskRequest createTaskRequest, String bearerToken) {
+    public PostTaskResponse add(CreateTaskRequest createTaskRequest, String bearerToken) {
         String token = Helper.extractToken(bearerToken);
         int userId = this.jwtService.extractUserId(token);
 
-        // TODO: add an exception
-        User user = this.userRepository.findById(userId).orElseThrow();
+        User user = this.userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("there is not any user with this id"));
 
         // store the requestId before mapping
         String requestId = createTaskRequest.getRequestId();
 
-        // To ignore the requestId field in CreateTaskRequest, we need to setRequestId as null
+        // To ignore the requestId field for mapper process, we need to setRequestId as null
         createTaskRequest.setRequestId(null);
         
         Task task = this.modelMapperService.forRequest().map(createTaskRequest,Task.class);
         task.setUser(user);
         this.taskRepository.save(task);
 
-        // set requestId again to show in response
-        createTaskRequest.setRequestId(requestId);
-        return createTaskRequest;
+        PostTaskResponse postTaskResponse = new PostTaskResponse();
+        postTaskResponse.setRequestId(requestId);
+        postTaskResponse.setTitle(createTaskRequest.getTitle());
+        postTaskResponse.setBody(createTaskRequest.getBody());
+        postTaskResponse.setDatetime(LocalDateTime.now());
+        postTaskResponse.setStatus("SUCCESS");
+        return postTaskResponse;
     }
 
     @Override
-    public UpdateTaskRequest update(UpdateTaskRequest updateTaskRequest) {
+    public UpdateTaskResponse update(UpdateTaskRequest updateTaskRequest) {
         // Find the task by ID
-        Task task = this.taskRepository.findById(updateTaskRequest.getTaskId());
-        // TODO: add an exception
-        /*  .orElseThrow(); */
+        Task task = this.taskRepository.findById(updateTaskRequest.getTaskId()).orElseThrow(()->new TaskNotFoundException("there is not any task with this id"));
 
         // Check if title is provided for update
         if (updateTaskRequest.getTitle() != null) {
-        task.setTitle(updateTaskRequest.getTitle());
+            task.setTitle(updateTaskRequest.getTitle());
         }
 
         // Check if body is provided for update
         if (updateTaskRequest.getBody() != null) {
-        task.setBody(updateTaskRequest.getBody());
+            task.setBody(updateTaskRequest.getBody());
         }
 
         // Save the updated task to the repository
         this.taskRepository.save(task);
 
-        return updateTaskRequest;
+        UpdateTaskResponse updateTaskResponse = new UpdateTaskResponse();
+
+        updateTaskResponse.setBody(task.getBody());
+        updateTaskResponse.setDatetime(LocalDateTime.now());
+        updateTaskResponse.setRequestId(updateTaskRequest.getRequestId());
+        updateTaskResponse.setStatus("SUCCESS");
+        updateTaskResponse.setTitle(task.getTitle());
+        return updateTaskResponse;
     }
 }

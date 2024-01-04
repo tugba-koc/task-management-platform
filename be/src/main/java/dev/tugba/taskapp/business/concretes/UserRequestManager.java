@@ -1,5 +1,7 @@
 package dev.tugba.taskapp.business.concretes;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +28,16 @@ public class UserRequestManager implements UserRequestService {
     }
 
     @Override
-    public GetAllUserDataResponse getAllUserData(String bearerToken) {
+    public GetAllUserDataResponse getAllUserData(String bearerToken, String requestId) {
         String token = Helper.extractToken(bearerToken);
         String email = this.jwtService.extractUsername(token);
         User user = this.userRepository.findByEmail(email).orElseThrow();
         GetAllUserDataResponse getAllUserDataResponse = this.modelMapperService.forResponse().map(user,GetAllUserDataResponse.class);
+        
+        getAllUserDataResponse.setDatetime(new Date());
+        getAllUserDataResponse.setStatus("SUCCESS");
+        getAllUserDataResponse.setRequestId(requestId);
+        
         return getAllUserDataResponse;
     }
 }

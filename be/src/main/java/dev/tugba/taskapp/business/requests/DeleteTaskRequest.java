@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class DeleteTaskRequest {
     @NotNull(message = "taskId : must not be null")
     private int taskId;
+    private String requestId;
 }
