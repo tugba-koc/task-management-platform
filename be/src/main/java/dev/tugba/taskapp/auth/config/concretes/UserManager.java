@@ -26,7 +26,7 @@ public class UserManager implements UserService {
                 }else {
                     return userRepository.findByTurkishId(username).orElseThrow(() -> new UsernameNotFoundException("no user found with the turkishId"));
                 }
-                
+    
             }
             
         };

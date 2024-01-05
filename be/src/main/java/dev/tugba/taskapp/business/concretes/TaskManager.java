@@ -46,10 +46,12 @@ public class TaskManager implements TaskService {
     public DeleteTaskResponse delete(DeleteTaskRequest deleteTaskRequest) {
         Task task = this.taskRepository.findById(deleteTaskRequest.getTaskId()).orElseThrow(()->new TaskNotFoundException("there is not any task with this id"));
         this.taskRepository.delete(task);
-        DeleteTaskResponse deleteTaskResponse = new DeleteTaskResponse();
-        deleteTaskResponse.setDatetime(LocalDateTime.now());
-        deleteTaskResponse.setRequestId(deleteTaskRequest.getRequestId());
-        deleteTaskResponse.setStatus("Success");
+        DeleteTaskResponse deleteTaskResponse = DeleteTaskResponse.builder()
+            .datetime(LocalDateTime.now())
+            .requestId(deleteTaskRequest.getRequestId())
+            .status("SUCCESS")
+            .build();
+            
         return deleteTaskResponse;
     }
 
@@ -66,11 +68,13 @@ public class TaskManager implements TaskService {
                 .map(task->this.modelMapperService.forResponse()
                         .map(task,GetAllTaskData.class)).collect(Collectors.toList());
 
-        GetAllTaskResponse getAllTaskResponse = new GetAllTaskResponse();
-        getAllTaskResponse.setTaskList(taskList);
-        getAllTaskResponse.setDatetime(LocalDateTime.now());
-        getAllTaskResponse.setStatus("SUCCESS");
-        getAllTaskResponse.setRequestId(requestId);
+        GetAllTaskResponse getAllTaskResponse = GetAllTaskResponse.builder()
+            .taskList(taskList)
+            .datetime(LocalDateTime.now())
+            .status("SUCCESS")
+            .requestId(requestId)
+            .build();
+
         return getAllTaskResponse;
     }
 
@@ -91,12 +95,14 @@ public class TaskManager implements TaskService {
         task.setUser(user);
         this.taskRepository.save(task);
 
-        PostTaskResponse postTaskResponse = new PostTaskResponse();
-        postTaskResponse.setRequestId(requestId);
-        postTaskResponse.setTitle(createTaskRequest.getTitle());
-        postTaskResponse.setBody(createTaskRequest.getBody());
-        postTaskResponse.setDatetime(LocalDateTime.now());
-        postTaskResponse.setStatus("SUCCESS");
+        PostTaskResponse postTaskResponse = PostTaskResponse.builder()
+            .requestId(requestId)
+            .title(createTaskRequest.getTitle())
+            .body(createTaskRequest.getBody())
+            .datetime(LocalDateTime.now())
+            .status("SUCCESS")
+            .build();
+
         return postTaskResponse;
     }
 
@@ -118,13 +124,14 @@ public class TaskManager implements TaskService {
         // Save the updated task to the repository
         this.taskRepository.save(task);
 
-        UpdateTaskResponse updateTaskResponse = new UpdateTaskResponse();
+        UpdateTaskResponse updateTaskResponse = UpdateTaskResponse.builder()
+            .body(task.getBody())
+            .datetime(LocalDateTime.now())
+            .requestId(updateTaskRequest.getRequestId())
+            .status("SUCCESS")
+            .title(task.getTitle())
+            .build();
 
-        updateTaskResponse.setBody(task.getBody());
-        updateTaskResponse.setDatetime(LocalDateTime.now());
-        updateTaskResponse.setRequestId(updateTaskRequest.getRequestId());
-        updateTaskResponse.setStatus("SUCCESS");
-        updateTaskResponse.setTitle(task.getTitle());
         return updateTaskResponse;
     }
 }
