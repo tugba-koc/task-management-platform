@@ -16,4 +16,5 @@ public class UpdateUserEmailAddressResponse {
     private String status;
     private LocalDateTime datetime;
     private String requestId;
+    private String token;
 }

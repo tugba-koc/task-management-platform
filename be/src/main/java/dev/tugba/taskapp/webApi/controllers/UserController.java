@@ -28,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok(this.userRequestService.getAllUserData(bearerToken, requestId));
     }
 
-    @PatchMapping
+    @PatchMapping("/update")
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public ResponseEntity<UpdateUserEmailAddressResponse> updateuserEmailAddress(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid UpdateUserEmailAddressRequest updateUserEmailAddressRequest) {
         return ResponseEntity.ok(this.userRequestService.updateUserEmailAddress(bearerToken, updateUserEmailAddressRequest));

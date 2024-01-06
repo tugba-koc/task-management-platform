@@ -56,11 +56,14 @@ public class UserRequestManager implements UserRequestService {
         user.setEmail(updateUserEmailAddressRequest.getEmail());
         this.userRepository.save(user);
 
+        String jwtToken = this.jwtService.generateToken(user);
+
         UpdateUserEmailAddressResponse updateUserEmailAddressResponse = UpdateUserEmailAddressResponse.builder()
             .email(updateUserEmailAddressRequest.getEmail())
             .status("SUCCESS")
             .datetime(LocalDateTime.now())
             .requestId(updateUserEmailAddressRequest.getRequestId())
+            .token(jwtToken)
             .build();
         
         return updateUserEmailAddressResponse;

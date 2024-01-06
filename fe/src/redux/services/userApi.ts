@@ -54,12 +54,35 @@ export const userApi = createApi({
           Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
       }),
+      providesTags: ['GetUserData'],
       onQueryStarted: async (credentials, { dispatch, queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
           dispatch(setUserData(data));
         } catch (error) {
           dispatch(setUserData({}));
+        }
+      },
+    }),
+    updateUserEmail: builder.mutation({
+      query: (email) => ({
+        url: '/user/update',
+        method: 'PATCH',
+        body: {
+          email: email,
+          requestId: uuidv4(),
+        },
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      }),
+      onQueryStarted: async (credentials, { queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          localStorage.setItem('jwt', data.token);
+        } catch (error) {
+          console.log('error');
         }
       },
     }),
@@ -70,4 +93,5 @@ export const {
   useAuthenticateMutation,
   useRegisterMutation,
   useGetUserDataQuery,
+  useUpdateUserEmailMutation,
 } = userApi;

@@ -22,8 +22,10 @@ public class UserManager implements UserService {
             @Override
             public UserDetails loadUserByUsername(String username) {
                 if(Helper.isValidEmail(username)){
+                    // TODO: add an exception to show in response
                     return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("no user found with the email"));
                 }else {
+                    // TODO: add an exception to show in response
                     return userRepository.findByTurkishId(username).orElseThrow(() -> new UsernameNotFoundException("no user found with the turkishId"));
                 }
     
