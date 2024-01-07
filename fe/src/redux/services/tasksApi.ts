@@ -24,7 +24,7 @@ export const tasksApi = createApi({
       onQueryStarted: async (credentials, { dispatch, queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
-          dispatch(setTaskData(data));
+          dispatch(setTaskData(data.taskList));
         } catch (error) {
           dispatch(setTaskData([]));
         }

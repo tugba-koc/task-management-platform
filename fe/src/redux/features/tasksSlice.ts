@@ -3,13 +3,13 @@ import { createSlice } from '@reduxjs/toolkit';
 export const tasksSlice = createSlice({
   name: 'tasks',
   initialState: {
-    tasks: [],
+    taskList: [],
   },
   reducers: {
     setTaskData(state: initialState, action) {
       return {
         ...state,
-        tasks: action.payload,
+        taskList: action.payload,
       };
     },
   },

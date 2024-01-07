@@ -58,7 +58,14 @@ export const userApi = createApi({
       onQueryStarted: async (credentials, { dispatch, queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
-          dispatch(setUserData(data));
+          dispatch(
+            setUserData({
+              firstname: data.firstname,
+              lastname: data.lastname,
+              turkishId: data.turkishId,
+              email: data.email,
+            })
+          );
         } catch (error) {
           dispatch(setUserData({}));
         }
@@ -81,6 +88,12 @@ export const userApi = createApi({
         try {
           const { data } = await queryFulfilled;
           localStorage.setItem('jwt', data.token);
+          dispatch(
+            setUserData({
+              ...(prev || {}),
+              email: data.email,
+            })
+          );
         } catch (error) {
           console.log('error');
         }
