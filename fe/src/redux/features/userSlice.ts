@@ -17,12 +17,22 @@ const userSlice = createSlice({
         userData: action.payload,
       };
     },
+    updateUserData(state, action) {
+      const { name, value } = action.payload;
+      return {
+        ...state,
+        userData: {
+          ...state.userData,
+          [name]: value,
+        },
+      };
+    },
   },
   selectors: {
     selectUserData: (state) => state.userData,
   },
 });
 
-export const { setUserData } = userSlice.actions;
+export const { setUserData, updateUserData } = userSlice.actions;
 export const { selectUserData } = userSlice.selectors;
 export default userSlice.reducer;

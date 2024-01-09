@@ -3,13 +3,17 @@ import {
   useGetUserDataQuery,
   useUpdateUserEmailMutation,
 } from '../../redux/services/userApi';
+import { useSelector } from 'react-redux';
+import { selectUserData } from '../../redux/features/userSlice';
 
 const UserSettings = () => {
   const [updateEmail, setUpdateEmail] = useState(false);
-  const { data: userData, isError, error, isLoading } = useGetUserDataQuery();
-  const [updateUserEmail] = useUpdateUserEmailMutation();
-
   const [updatedEmailData, setUpdatedEmailData] = useState();
+
+  const userData = useSelector(selectUserData);
+
+  const { isError, error, isLoading } = useGetUserDataQuery();
+  const [updateUserEmail] = useUpdateUserEmailMutation();
 
   const handleChange = (e) => {
     setUpdatedEmailData(e.target.value);
@@ -66,10 +70,7 @@ const UserSettings = () => {
         />
 
         {/* {errorText ? <p className='error'>{errorText}</p> : null} */}
-        <button
-          onClick={() => handleUpdate()}
-          type='submit'
-        >
+        <button onClick={() => handleUpdate()} type='submit'>
           {updateEmail ? 'save' : 'change'}
         </button>
       </form>

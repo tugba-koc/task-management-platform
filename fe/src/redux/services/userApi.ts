@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { setUserData } from '../features/userSlice';
+import { setUserData, updateUserData } from '../features/userSlice';
 import { v4 as uuidv4 } from 'uuid';
 
 export const userApi = createApi({
@@ -84,18 +84,18 @@ export const userApi = createApi({
           Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
       }),
-      onQueryStarted: async (credentials, { queryFulfilled }) => {
+      onQueryStarted: async (credentials, { dispatch, queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
-          localStorage.setItem('jwt', data.token);
           dispatch(
-            setUserData({
-              ...(prev || {}),
-              email: data.email,
+            updateUserData({
+              name: 'email',
+              value: data.email,
             })
           );
+          localStorage.setItem('jwt', data.token);
         } catch (error) {
-          console.log('error');
+          dispatch(setUserData({}));
         }
       },
     }),
