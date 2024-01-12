@@ -11,11 +11,15 @@ const Task = () => {
   const [update, setUpdate] = useState<boolean>(false);
   const [prevData, setPrevData] = useState({ id: null, title: '', body: '' });
 
-  const { data: userData, isError, isSuccess, error } = useGetUserDataQuery();
+  const {
+    data: userData,
+    isSuccess,
+    error: errorGetUserData,
+  } = useGetUserDataQuery();
 
   const { data: tasks, isLoading } = useGetAllTasksQuery();
 
-  const [postTask] = usePostTaskMutation();
+  const [postTask, { error: errorPostTask }] = usePostTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTaskData] = useUpdateTaskMutation();
 
@@ -74,8 +78,11 @@ const Task = () => {
   if (isLoading) {
     return <>Loading....</>;
   }
-  if (isError) {
-    return <>Error : {error}</>;
+  if (errorPostTask || errorGetUserData) {
+    console.log('errorGetUserData', errorGetUserData);
+
+    window.location.href = '/';
+    localStorage.removeItem('jwt');
   }
   if (isSuccess) {
     return (

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const navigate = useNavigate();
-  console.log(localStorage.getItem('jwt'));
 
   return (
     <div className='container'>

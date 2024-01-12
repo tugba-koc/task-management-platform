@@ -67,7 +67,8 @@ export const userApi = createApi({
             })
           );
         } catch (error) {
-          dispatch(setUserData({}));
+          window.location.href = '/';
+          localStorage.removeItem('jwt');
         }
       },
     }),
@@ -95,7 +96,8 @@ export const userApi = createApi({
           );
           localStorage.setItem('jwt', data.token);
         } catch (error) {
-          dispatch(setUserData({}));
+          window.location.href = '/';
+          localStorage.removeItem('jwt');
         }
       },
     }),

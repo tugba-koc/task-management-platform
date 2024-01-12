@@ -26,7 +26,8 @@ export const tasksApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(setTaskData(data.taskList));
         } catch (error) {
-          dispatch(setTaskData([]));
+          window.location.href = '/';
+          localStorage.removeItem('jwt');
         }
       },
     }),
