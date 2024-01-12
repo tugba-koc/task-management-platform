@@ -2,10 +2,10 @@ package dev.tugba.taskapp.auth.config.concretes;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import dev.tugba.taskapp.auth.config.abstracts.UserService;
+import dev.tugba.taskapp.core.utilities.exceptions.UserNotFoundException;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
 import dev.tugba.taskapp.helper.Helper;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,9 @@ public class UserManager implements UserService {
             @Override
             public UserDetails loadUserByUsername(String username) {
                 if(Helper.isValidEmail(username)){
-                    // TODO: add an exception to show in response
-                    return userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("no user found with the email"));
+                    return userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException("no user found with this email"));
                 }else {
-                    // TODO: add an exception to show in response
-                    return userRepository.findByTurkishId(username).orElseThrow(() -> new UsernameNotFoundException("no user found with the turkishId"));
+                    return userRepository.findByTurkishId(username).orElseThrow(() -> new UserNotFoundException("no user found with this turkishId"));
                 }
     
             }

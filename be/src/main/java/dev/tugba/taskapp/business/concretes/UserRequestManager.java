@@ -11,6 +11,7 @@ import dev.tugba.taskapp.business.abstracts.UserRequestService;
 import dev.tugba.taskapp.business.requests.UpdateUserEmailAddressRequest;
 import dev.tugba.taskapp.business.responses.GetAllUserDataResponse;
 import dev.tugba.taskapp.business.responses.UpdateUserEmailAddressResponse;
+import dev.tugba.taskapp.core.utilities.exceptions.UserNotFoundException;
 import dev.tugba.taskapp.core.utilities.mappers.ModelMapperService;
 import dev.tugba.taskapp.dataAccess.abstracts.UserRepository;
 import dev.tugba.taskapp.entities.concretes.User;
@@ -35,8 +36,7 @@ public class UserRequestManager implements UserRequestService {
         String token = Helper.extractToken(bearerToken);
         String email = this.jwtService.extractUsername(token);
 
-        // TODO: add an exception
-        User user = this.userRepository.findByEmail(email).orElseThrow();
+        User user = this.userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("no user found with this email"));
         GetAllUserDataResponse getAllUserDataResponse = this.modelMapperService.forResponse().map(user,GetAllUserDataResponse.class);
         
         getAllUserDataResponse.setDatetime(new Date());
@@ -51,8 +51,7 @@ public class UserRequestManager implements UserRequestService {
         String token = Helper.extractToken(bearerToken);
         String email = this.jwtService.extractUsername(token);
 
-        // TODO: add an exception
-        User user = this.userRepository.findByEmail(email).orElseThrow();
+        User user = this.userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("no user found with this email"));
         user.setEmail(updateUserEmailAddressRequest.getEmail());
         this.userRepository.save(user);
 
