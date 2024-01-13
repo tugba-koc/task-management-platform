@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
+import { useVerifySessionMutation } from '../../redux/services/userApi';
 
 const Home = () => {
   const navigate = useNavigate();
+
+  const [verifySession] = useVerifySessionMutation();
+
+  useEffect(() => {
+    if (localStorage.getItem('jwt')) {
+      verifySession();
+    }
+  }, []);
 
   return (
     <div className='container'>

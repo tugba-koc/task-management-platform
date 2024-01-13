@@ -72,6 +72,24 @@ export const userApi = createApi({
         }
       },
     }),
+    verifySession: builder.mutation({
+      query: () => ({
+        url: '/user/verifySession',
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      }),
+      onQueryStarted: async () => {
+        try {
+          localStorage.removeItem('jwt');
+        } catch (error) {
+          window.location.href = '/';
+          localStorage.removeItem('jwt');
+        }
+      },
+    }),
     updateUserEmail: builder.mutation({
       query: (email) => ({
         url: '/user/update',
@@ -109,4 +127,5 @@ export const {
   useRegisterMutation,
   useGetUserDataQuery,
   useUpdateUserEmailMutation,
+  useVerifySessionMutation,
 } = userApi;

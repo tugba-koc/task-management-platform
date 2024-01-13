@@ -1,5 +1,7 @@
 package dev.tugba.taskapp.business.concretes;
 
+import java.time.LocalDateTime;
+
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,7 @@ import dev.tugba.taskapp.business.abstracts.AuthenticationService;
 import dev.tugba.taskapp.business.requests.CreateAuthenticationRequest;
 import dev.tugba.taskapp.business.requests.CreateRegisterRequest;
 import dev.tugba.taskapp.business.responses.GetAuthenticationResponse;
+import dev.tugba.taskapp.business.responses.PostVerifySessionResponse;
 import dev.tugba.taskapp.core.utilities.exceptions.AccountCodeNotFoundException;
 import dev.tugba.taskapp.core.utilities.exceptions.AlreadyExistsUserException;
 import dev.tugba.taskapp.core.utilities.exceptions.AuthenticationServiceException;
@@ -86,7 +89,17 @@ public class AuthenticateManager implements AuthenticationService {
         } catch (Exception e) {
             throw new AuthenticationServiceException("Authentication service error");
         }
-        
+    }
+
+    @Override
+    public PostVerifySessionResponse verifySession(String token) {
+        boolean isTokenExpired = jwtService.isTokenExpired(token);
+        return PostVerifySessionResponse
+            .builder()
+            .datetime(LocalDateTime.now())
+            .status(isTokenExpired ? true : false)
+            .requestId(token)
+            .build();
     }
     // TODO: add logout operation
 }

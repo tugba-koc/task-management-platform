@@ -10,4 +10,5 @@ public interface JwtService {
     public String extractUsername(String token);
     public boolean isTokenValid(String token, UserDetails userDetails);
     public int extractUserId(String token);
+    public boolean isTokenExpired(String token);
 }

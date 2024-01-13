@@ -27,7 +27,7 @@ public class JwtManager implements JwtService {
             .subject(user.getUsername())
             .claim("userId", user.getId())
             .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1 / 60))
             .signWith(getSigninKey())
             .compact();
     }
@@ -72,7 +72,7 @@ public class JwtManager implements JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private boolean isTokenExpired(String token)
+    public boolean isTokenExpired(String token)
     {
         return getExpiration(token).before(new Date());
     }

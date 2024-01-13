@@ -81,8 +81,8 @@ const Task = () => {
   if (errorPostTask || errorGetUserData) {
     console.log('errorGetUserData', errorGetUserData);
 
-    window.location.href = '/';
-    localStorage.removeItem('jwt');
+/*     window.location.href = '/';
+    localStorage.removeItem('jwt'); */
   }
   if (isSuccess) {
     return (
