@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { setUserData, updateUserData } from '../features/userSlice';
+import {
+  setIsLoggedIn,
+  setUserData,
+  updateUserData,
+} from '../features/userSlice';
 import { v4 as uuidv4 } from 'uuid';
 
 export const userApi = createApi({
@@ -18,6 +22,7 @@ export const userApi = createApi({
         try {
           const { data } = await queryFulfilled;
           localStorage.setItem('jwt', data.token);
+          dispatch(setIsLoggedIn(true));
         } catch (error) {
           console.log('error');
         }
@@ -33,10 +38,11 @@ export const userApi = createApi({
           requestId: uuidv4(),
         },
       }),
-      onQueryStarted: async (credentials, { queryFulfilled }) => {
+      onQueryStarted: async (credentials, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
           localStorage.setItem('jwt', data.token);
+          dispatch(setIsLoggedIn(true));
         } catch (error) {
           console.log('error');
         }
@@ -74,16 +80,21 @@ export const userApi = createApi({
     }),
     verifySession: builder.mutation({
       query: () => ({
-        url: '/user/verifySession',
+        url: '/auth/verifySession',
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
       }),
-      onQueryStarted: async () => {
+      onQueryStarted: async (credentials, { queryFulfilled, dispatch }) => {
         try {
-          localStorage.removeItem('jwt');
+          const { data } = await queryFulfilled;
+          if (data.status === 'SUCCESS') {
+            dispatch(setIsLoggedIn(true));
+          } else {
+            dispatch(setIsLoggedIn(false));
+          }
         } catch (error) {
           window.location.href = '/';
           localStorage.removeItem('jwt');

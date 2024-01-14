@@ -93,11 +93,12 @@ public class AuthenticateManager implements AuthenticationService {
 
     @Override
     public PostVerifySessionResponse verifySession(String token) {
-        boolean isTokenExpired = jwtService.isTokenExpired(token);
+        String jwt = token.substring(7);
+        boolean isTokenExpired = jwtService.isTokenExpired(jwt);
         return PostVerifySessionResponse
             .builder()
             .datetime(LocalDateTime.now())
-            .status(isTokenExpired ? true : false)
+            .status(!isTokenExpired ? "SUCCESS" : "FAILED")
             .requestId(token)
             .build();
     }

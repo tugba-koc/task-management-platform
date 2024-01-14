@@ -1,18 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import { useVerifySessionMutation } from '../../redux/services/userApi';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedIn } from '../../redux/features/userSlice';
 
 const Home = () => {
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  
   const navigate = useNavigate();
 
   const [verifySession] = useVerifySessionMutation();
 
   useEffect(() => {
-    if (localStorage.getItem('jwt')) {
-      verifySession();
+    if (localStorage.getItem('jwt') && !isLoggedIn) {
+      verifySession().then((res) => {
+        if (res.data.status === 'SUCCESS') {
+          navigate('/');
+          setIsMounted(true);
+        } else if (res.data.status === 'FAILED') {
+          navigate('/');
+        }
+      });
     }
-  }, []);
+  }, [isLoggedIn, navigate, verifySession]);
 
   return (
     <div className='container'>
@@ -31,7 +42,7 @@ const Home = () => {
                 navigate('user/profile');
               }}
             >
-              settings
+              Settings
             </button>
           </>
         ) : (

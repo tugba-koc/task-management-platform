@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PostVerifySessionResponse {
-    private boolean status;
+    private String status;
     private LocalDateTime datetime;
     private String requestId;
 }

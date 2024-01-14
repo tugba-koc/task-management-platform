@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthenticateMutation } from '@redux/services/userApi';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedIn } from '../../redux/features/userSlice';
+import { useVerifySessionMutation } from '../../redux/services/userApi';
 
 const Login = () => {
+  const isLoggedIn = useSelector(selectIsLoggedIn);
   const [user, setUser] = useState({ username: '', password: '' });
   const [errorText, setErrorText] = useState();
 
   const [authenticate] = useAuthenticateMutation();
+  const [verifySession] = useVerifySessionMutation();
+
+  useEffect(() => {
+    if (localStorage.getItem('jwt')) verifySession();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -28,7 +37,7 @@ const Login = () => {
           setErrorText('Kullanıcı kimliği uyuşmuyor.');
         }
       } else {
-        navigate('/direction');
+        navigate('/');
       }
     } catch (error) {
       setErrorText(error.message);
@@ -39,6 +48,7 @@ const Login = () => {
 
   return (
     <>
+      {isLoggedIn && <Navigate to='/' replace={true} />}
       <h3>Login</h3>
       <form onSubmit={(e) => e.preventDefault()}>
         <label htmlFor='username'>Username</label>

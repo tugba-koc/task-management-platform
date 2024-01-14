@@ -32,7 +32,7 @@ const Register = () => {
           setErrorText('Turkish id is already saved in our db.');
         }
       } else {
-        navigate('/direction');
+        navigate('/');
       }
     } catch (error) {
       setErrorText(error.message);
