@@ -7,7 +7,7 @@ import { selectIsLoggedIn } from '../../redux/features/userSlice';
 
 const Home = () => {
   const isLoggedIn = useSelector(selectIsLoggedIn);
-  
+
   const navigate = useNavigate();
 
   const [verifySession] = useVerifySessionMutation();
@@ -17,7 +17,6 @@ const Home = () => {
       verifySession().then((res) => {
         if (res.data.status === 'SUCCESS') {
           navigate('/');
-          setIsMounted(true);
         } else if (res.data.status === 'FAILED') {
           navigate('/');
         }

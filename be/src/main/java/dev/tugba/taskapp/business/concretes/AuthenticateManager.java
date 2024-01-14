@@ -102,5 +102,4 @@ public class AuthenticateManager implements AuthenticationService {
             .requestId(token)
             .build();
     }
-    // TODO: add logout operation
 }

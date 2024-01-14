@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuthenticateMutation } from '@redux/services/userApi';
+import { useAuthenticateMutation } from '../../redux/services/userApi';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsLoggedIn } from '../../redux/features/userSlice';
@@ -15,6 +15,7 @@ const Login = () => {
 
   useEffect(() => {
     if (localStorage.getItem('jwt')) verifySession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Login = () => {
       const res = await authenticate(user);
 
       if (res.error) {
-        if (res.error.data.statusCode === 422) {
+        if (res.error.status === 422) {
           setErrorText('Kullanıcı kimliği uyuşmuyor.');
         }
       } else {
@@ -67,6 +68,7 @@ const Login = () => {
           type='password'
           name='password'
           id='password'
+          autoComplete='password'
           value={user.password}
         />
 

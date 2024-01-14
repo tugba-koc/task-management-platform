@@ -5,8 +5,11 @@ import {
 } from '../../redux/services/userApi';
 import { useSelector } from 'react-redux';
 import { selectUserData } from '../../redux/features/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const UserSettings = () => {
+  const navigate = useNavigate();
+
   const [updateEmail, setUpdateEmail] = useState(false);
   const [updatedEmailData, setUpdatedEmailData] = useState();
 
@@ -32,6 +35,12 @@ const UserSettings = () => {
     }
   };
 
+  const handleLogout = () => {
+    navigate('/', { replace: true });
+    window.location.reload();
+    localStorage.removeItem('jwt');
+  };
+
   if (isLoading) {
     return <>Loading....</>;
   }
@@ -40,7 +49,10 @@ const UserSettings = () => {
   }
   return (
     <>
-      <div>{userData?.firstname}</div>
+      <div className='group'>
+        <p>{userData?.firstname}</p>
+        <button onClick={() => handleLogout()}>logout</button>{' '}
+      </div>
       <form onSubmit={(e) => e.preventDefault()}>
         <label htmlFor='firstname'>firstname</label>
         <input

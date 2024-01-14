@@ -98,6 +98,7 @@ const Register = () => {
         name='password'
         id='password'
         value={user.password}
+        autoComplete='password'
       />
 
       {errorText ? <p className='error'>{errorText}</p> : null}
