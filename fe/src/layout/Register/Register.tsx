@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRegisterMutation } from '../../redux/services/userApi';
 
 const Register = () => {
+  const locate = useLocation();
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
     firstname: '',
     lastname: '',
@@ -12,9 +15,7 @@ const Register = () => {
   });
   const [errorText, setErrorText] = useState();
 
-  const [trigger] = useRegisterMutation();
-
-  const navigate = useNavigate();
+  const [register] = useRegisterMutation();
 
   const handleChange = (e) => {
     setErrorText();
@@ -24,7 +25,8 @@ const Register = () => {
 
   const handleRegister = async () => {
     try {
-      const res = await trigger(user);
+      const role = locate.pathname === '/admin/register' ? 'admin' : '';
+      const res = await register({ user, role });
       if (res.error) {
         if (res.error.status === 400) {
           setErrorText('Hatalı giriş yaptınız.');

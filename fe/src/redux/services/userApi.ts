@@ -14,9 +14,9 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (data) => ({
-        url: '/auth/register',
+        url: `${data.role}/auth/register`,
         method: 'POST',
-        body: data,
+        body: data.user,
       }),
       onQueryStarted: async (credentials, { queryFulfilled }) => {
         try {

@@ -6,6 +6,7 @@ import Login from '../layout/Login/Login';
 import Register from '../layout/Register/Register';
 import Task from '../layout/Task/Task';
 import UserSettings from '../layout/UserSettings/UserSettings';
+import Admin from '../layout/Admin/Admin';
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,16 @@ export const router = createBrowserRouter([
   {
     path: 'register',
     element: <Register />,
+    errorElement: <Error />,
+  },
+  {
+    path: 'admin/register',
+    element: <Register />,
+    errorElement: <Error />,
+  },
+  {
+    path: 'admin',
+    element: <Admin />,
     errorElement: <Error />,
   },
   {

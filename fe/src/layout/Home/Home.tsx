@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './Home.css';
 import { useNavigate } from 'react-router-dom';
 import { useVerifySessionMutation } from '../../redux/services/userApi';
@@ -59,6 +59,13 @@ const Home = () => {
               }}
             >
               Register
+            </button>
+            <button
+              onClick={() => {
+                navigate('admin');
+              }}
+            >
+              Admin
             </button>
           </>
         )}

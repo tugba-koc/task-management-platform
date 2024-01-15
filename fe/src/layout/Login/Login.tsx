@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthenticateMutation } from '../../redux/services/userApi';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsLoggedIn } from '../../redux/features/userSlice';
 import { useVerifySessionMutation } from '../../redux/services/userApi';
 
 const Login = () => {
   const isLoggedIn = useSelector(selectIsLoggedIn);
+
+  const location = useLocation();
+
   const [user, setUser] = useState({ username: '', password: '' });
   const [errorText, setErrorText] = useState();
 
@@ -82,6 +85,9 @@ const Login = () => {
           login
         </button>
       </form>
+      {location.pathname == '/admin' ? (
+        <button onClick={() => navigate('/admin/register')}>register</button>
+      ) : null}
     </>
   );
 };
