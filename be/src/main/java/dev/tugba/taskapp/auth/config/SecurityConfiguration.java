@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import dev.tugba.taskapp.auth.config.abstracts.UserService;
 import dev.tugba.taskapp.auth.config.components.JwtAuthenticationFilter;
+import dev.tugba.taskapp.auth.config.constants.Role;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -35,8 +36,9 @@ public class SecurityConfiguration {
         http
         .csrf(customizer -> customizer.disable())
         .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                .requestMatchers("/api/v1/auth/**").hasRole("USER")
-                .requestMatchers("/api/v1/admin/auth/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/auth/register").permitAll()
+                .requestMatchers("/api/v1/auth/authenticate").permitAll()
+                .requestMatchers("/api/v1/task").hasRole(Role.USER.name())
                 .anyRequest()
                 .authenticated()
         )
