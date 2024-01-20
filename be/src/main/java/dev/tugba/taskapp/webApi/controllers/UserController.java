@@ -26,7 +26,6 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('visitor:read')")
-    // TODO: add caching structure with redis
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public ResponseEntity<GetAllUserDataResponse> getAllUserData(@RequestHeader("Authorization") String bearerToken, @RequestParam String requestId) {
         return ResponseEntity.ok(this.userRequestService.getAllUserData(bearerToken, requestId));

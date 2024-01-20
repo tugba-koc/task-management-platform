@@ -54,7 +54,6 @@ public class TasksController {
     
     @GetMapping
     @PreAuthorize("hasAuthority('visitor:read')")
-    // TODO: add caching structure with redis
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public ResponseEntity<GetAllTaskResponse> getAllTask(@RequestHeader("Authorization") String bearerToken, @RequestParam String requestId) {
         return ResponseEntity.ok(this.taskService.getAllTask(bearerToken, requestId));
