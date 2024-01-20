@@ -25,13 +25,13 @@ const Register = () => {
 
   const handleRegister = async () => {
     try {
-      const role = locate.pathname === '/admin/register' ? 'admin' : '';
+      const role = locate.pathname === '/admin/register' ? 'ADMIN' : 'VISITOR';
       const res = await register({ user, role });
       if (res.error) {
         if (res.error.status === 400) {
           setErrorText('Hatalı giriş yaptınız.');
         } else if (res.error.status === 422) {
-          setErrorText('Turkish id is already saved in our db.');
+          setErrorText('Kullanıcı hatası');
         }
       } else {
         navigate('/');

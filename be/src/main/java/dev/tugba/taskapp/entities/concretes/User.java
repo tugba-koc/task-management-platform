@@ -49,8 +49,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
-
     @Override
     public String getPassword() {
         return password;

@@ -43,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 jwt = authHeader.substring(7);
                 username = jwtService.extractUsername(jwt);
+                // it is safe to have a static util method to get the currently logged in user from SecurityContextHolder
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
                     UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
                     if(jwtService.isTokenValid(jwt, userDetails)){

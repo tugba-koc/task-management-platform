@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,11 +24,11 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     @Autowired
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     private final UserService userService;
 
     @Bean
@@ -36,17 +37,23 @@ public class SecurityConfiguration {
         http
         .csrf(customizer -> customizer.disable())
         .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                .requestMatchers("/api/v1/auth/register").permitAll()
-                .requestMatchers("/api/v1/auth/authenticate").permitAll()
-                .requestMatchers("/api/v1/task").hasRole(Role.USER.name())
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/task").hasRole(Role.VISITOR.name())
+                .requestMatchers("/api/v1/user").hasRole(Role.VISITOR.name())
                 .anyRequest()
                 .authenticated()
         )
         .sessionManagement((session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)))
-        .authenticationProvider(authenticationProvider());
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build(); 
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // TODO: learn logout process
+/*         .logout(logout ->
+                        logout.logoutUrl("/api/v1/auth/logout")
+                                .addLogoutHandler(logoutHandler)
+                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())); */
+    
+        return http.build();
     }
 
     @Bean

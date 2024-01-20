@@ -40,14 +40,15 @@ public class AuthenticateManager implements AuthenticationService {
         if(this.userRepository.existsByTurkishId(createRegisterRequest.getTurkishId())){
             throw new AlreadyExistsUserException("turkishId: it is already saved.");
         }
+
         User user = User.builder()
-        .firstname(createRegisterRequest.getFirstname())
-        .lastname(createRegisterRequest.getLastname())
-        .email(createRegisterRequest.getEmail())
-        .turkishId(createRegisterRequest.getTurkishId())
-        .password(this.passwordEncoder.encode(createRegisterRequest.getPassword()))
-        .role(Role.USER)
-        .build();
+            .firstname(createRegisterRequest.getFirstname())
+            .lastname(createRegisterRequest.getLastname())
+            .email(createRegisterRequest.getEmail())
+            .turkishId(createRegisterRequest.getTurkishId())
+            .password(this.passwordEncoder.encode(createRegisterRequest.getPassword()))
+            .role(createRegisterRequest.getRole().toString() == "ADMIN" ? Role.ADMIN: Role.VISITOR)
+            .build();
 
         // add user to userRepository
         this.userRepository.save(user);

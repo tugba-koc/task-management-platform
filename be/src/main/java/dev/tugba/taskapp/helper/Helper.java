@@ -4,6 +4,8 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
+import dev.tugba.taskapp.auth.config.constants.Role;
+
 public class Helper {
     // Check the data is email or not
     private static final String EMAIL_REGEX =
@@ -29,4 +31,9 @@ public class Helper {
         }
         throw new IllegalArgumentException("Invalid bearer token format");
     }
+
+    public static Role convert(String source) {
+        return Role.valueOf(source.toUpperCase());
+    }
+
 }

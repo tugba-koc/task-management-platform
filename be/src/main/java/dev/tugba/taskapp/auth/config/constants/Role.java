@@ -13,10 +13,10 @@ import static dev.tugba.taskapp.auth.config.constants.Permission.ADMIN_CREATE;
 import static dev.tugba.taskapp.auth.config.constants.Permission.ADMIN_DELETE;
 import static dev.tugba.taskapp.auth.config.constants.Permission.ADMIN_READ;
 import static dev.tugba.taskapp.auth.config.constants.Permission.ADMIN_UPDATE;
-import static dev.tugba.taskapp.auth.config.constants.Permission.PORTAL_CREATE;
-import static dev.tugba.taskapp.auth.config.constants.Permission.PORTAL_DELETE;
-import static dev.tugba.taskapp.auth.config.constants.Permission.PORTAL_READ;
-import static dev.tugba.taskapp.auth.config.constants.Permission.PORTAL_UPDATE;
+import static dev.tugba.taskapp.auth.config.constants.Permission.VISITOR_CREATE;
+import static dev.tugba.taskapp.auth.config.constants.Permission.VISITOR_DELETE;
+import static dev.tugba.taskapp.auth.config.constants.Permission.VISITOR_READ;
+import static dev.tugba.taskapp.auth.config.constants.Permission.VISITOR_UPDATE;
 
 @RequiredArgsConstructor
 public enum Role {
@@ -27,19 +27,15 @@ public enum Role {
                   ADMIN_READ,
                   ADMIN_UPDATE,
                   ADMIN_DELETE,
-                  ADMIN_CREATE,
-                  PORTAL_READ,
-                  PORTAL_UPDATE,
-                  PORTAL_DELETE,
-                  PORTAL_CREATE
+                  ADMIN_CREATE
           )
   ),
-  PORTAL(
+  VISITOR(
           Set.of(
-                  PORTAL_READ,
-                  PORTAL_UPDATE,
-                  PORTAL_DELETE,
-                  PORTAL_CREATE
+                  VISITOR_READ,
+                  VISITOR_UPDATE,
+                  VISITOR_DELETE,
+                  VISITOR_CREATE
           )
   );
 
@@ -47,11 +43,11 @@ public enum Role {
   private final Set<Permission> permissions;
 
   public List<SimpleGrantedAuthority> getAuthorities() {
-    var authorities = getPermissions()
+        List<SimpleGrantedAuthority> authorities = getPermissions()
             .stream()
             .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
             .collect(Collectors.toList());
-    authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-    return authorities;
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+        return authorities;
   }
 }

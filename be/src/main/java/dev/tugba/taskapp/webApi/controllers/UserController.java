@@ -1,6 +1,7 @@
 package dev.tugba.taskapp.webApi.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,17 +19,21 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@PreAuthorize("hasRole('VISITOR')")
 @AllArgsConstructor
 public class UserController {
     private UserRequestService userRequestService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('visitor:read')")
+    // TODO: add caching structure with redis
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public ResponseEntity<GetAllUserDataResponse> getAllUserData(@RequestHeader("Authorization") String bearerToken, @RequestParam String requestId) {
         return ResponseEntity.ok(this.userRequestService.getAllUserData(bearerToken, requestId));
     }
 
     @PatchMapping("/update")
+    @PreAuthorize("hasAuthority('visitor:update')")
     @CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials"})
     public ResponseEntity<UpdateUserEmailAddressResponse> updateuserEmailAddress(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid UpdateUserEmailAddressRequest updateUserEmailAddressRequest) {
         return ResponseEntity.ok(this.userRequestService.updateUserEmailAddress(bearerToken, updateUserEmailAddressRequest));

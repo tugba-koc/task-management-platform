@@ -1,5 +1,6 @@
 package dev.tugba.taskapp.business.requests;
 
+import dev.tugba.taskapp.auth.config.constants.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -43,4 +44,6 @@ public class CreateRegisterRequest {
     @NotEmpty(message = "password : must not be empty")
     @NotBlank(message = "password : must not be blank")
     private String password;
+    
+    private Role role;
 }
