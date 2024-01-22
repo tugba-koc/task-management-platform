@@ -44,7 +44,7 @@ export const userApi = createApi({
           localStorage.setItem('jwt', data.token);
           dispatch(setIsLoggedIn(true));
         } catch (error) {
-          console.log('error');
+          console.log('an error occured');
         }
       },
     }),

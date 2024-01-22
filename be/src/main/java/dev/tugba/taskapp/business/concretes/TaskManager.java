@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.tugba.taskapp.auth.config.abstracts.JwtService;
 import dev.tugba.taskapp.business.abstracts.TaskService;
@@ -55,6 +57,8 @@ public class TaskManager implements TaskService {
         return deleteTaskResponse;
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "UserRepository::findByEmail", key = "#bearerToken")
     @Override
     public GetAllTaskResponse getAllTask(String bearerToken, String requestId) {
         String token = Helper.extractToken(bearerToken);
@@ -62,7 +66,7 @@ public class TaskManager implements TaskService {
 
         User user = this.userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("there is not any user with this id"));
 
-        List<Task> tasks = this.taskRepository.findAllByUserId(user.getId()).orElseThrow(()-> new UserNotFoundException("there is not any task with this id"));
+        List<Task> tasks = this.taskRepository.findAllByUserIdOrderById(user.getId()).orElseThrow(()-> new UserNotFoundException("there is not any task with this id"));
 
         List<GetAllTaskData> taskList = tasks.stream()
                 .map(task->this.modelMapperService.forResponse()

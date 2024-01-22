@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.tugba.taskapp.auth.config.abstracts.JwtService;
 import dev.tugba.taskapp.business.abstracts.UserRequestService;
@@ -31,6 +33,8 @@ public class UserRequestManager implements UserRequestService {
         this.userRepository = userRepository;
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "JwtService::extractUsername", key = "#bearerToken")
     @Override
     public GetAllUserDataResponse getAllUserData(String bearerToken, String requestId) {
         String token = Helper.extractToken(bearerToken);

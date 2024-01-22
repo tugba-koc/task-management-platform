@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,13 +68,7 @@ public class AuthenticateManager implements AuthenticationService {
     public GetAuthenticationResponse authenticate(CreateAuthenticationRequest createAuthenticationRequest) {
         User user;
     
-        try {
-            // Try to authenticate the user
-            this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    createAuthenticationRequest.getAccountcode(), createAuthenticationRequest.getPassword()));
-    
-            // If authentication is successful, proceed to find the user
+            // check accountcode exists
             if (createAuthenticationRequest.getAccountcode() != null) {
                 if (Helper.isValidEmail(createAuthenticationRequest.getAccountcode())) {
                     user = this.userRepository.findByEmail(createAuthenticationRequest.getAccountcode()).orElseThrow(() -> new UserNotFoundException("there is not any user with this email"));
@@ -83,13 +78,19 @@ public class AuthenticateManager implements AuthenticationService {
             } else {
                 throw new AccountCodeNotFoundException("Account code cannot be null");
             }
+
+            try {
+                // Try to authenticate the user
+                this.authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                        createAuthenticationRequest.getAccountcode(), createAuthenticationRequest.getPassword()));
+            } catch (AuthenticationException e) {
+                throw new AuthenticationServiceException("Accountcode and password are not matching.");
+            }
     
             String jwtToken = this.jwtService.generateToken(user);
             return GetAuthenticationResponse.builder()
                 .token(jwtToken).build();
-        } catch (Exception e) {
-            throw new AuthenticationServiceException("Authentication service error");
-        }
     }
 
     @Override

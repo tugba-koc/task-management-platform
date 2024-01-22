@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AuthenticationServiceException.class)
     public ResponseEntity<Map<String, Object>> handleAuthenticationServiceException(AuthenticationServiceException ex) {
         List<String> errors = Collections.singletonList(ex.getMessage());
-        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Authentication.Exception"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Map<String, Object>>(getErrorsMap(errors, "Authentication.Exception"), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(Exception.class)

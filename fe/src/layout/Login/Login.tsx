@@ -13,7 +13,7 @@ const Login = () => {
   const [user, setUser] = useState({ username: '', password: '' });
   const [errorText, setErrorText] = useState();
 
-  const [authenticate] = useAuthenticateMutation();
+  const [authenticate, { error }] = useAuthenticateMutation();
   const [verifySession] = useVerifySessionMutation();
 
   useEffect(() => {
@@ -35,7 +35,6 @@ const Login = () => {
         localStorage.removeItem('jwt');
       }
       const res = await authenticate(user);
-
       if (res.error) {
         if (res.error.status === 422) {
           setErrorText('Kullanıcı kimliği uyuşmuyor.');

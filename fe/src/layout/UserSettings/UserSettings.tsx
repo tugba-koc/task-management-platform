@@ -29,6 +29,9 @@ const UserSettings = () => {
     } else {
       // click save
       setUpdateEmail(false);
+      console.log(updatedEmailData, 'updatedEmailData');
+      console.log(userData.email, 'userData.email');
+
       if (updatedEmailData !== userData.email) {
         updateUserEmail(updatedEmailData);
       }
